@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Antiforgery;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +46,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 builder.Services.AddHttpClient();
-builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
 // Configure cookies to be secure
@@ -55,12 +56,32 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.Cookie.SameSite = SameSiteMode.Strict; // Adjust this as necessary
 });
 
-builder.Services.AddAntiforgery(options =>
+//builder.Services.AddAntiforgery(options =>
+//{
+//    options.Cookie.HttpOnly = true;
+//    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//    options.Cookie.SameSite = SameSiteMode.Strict; // Adjust this as necessary
+//});
+
+// Add Swagger services
+builder.Services.AddSwaggerGen(c =>
 {
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict; // Adjust this as necessary
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API Name", Version = "v1" });
 });
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
+// Register controllers
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -81,11 +102,32 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Antiforgery middleware should be included in the middleware pipeline
-app.UseAntiforgery();
+// Antiforgery middleware should not interfere with API requests
+app.Use((context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        var antiforgery = context.RequestServices.GetService<IAntiforgery>();
+        if (antiforgery != null)
+        {
+            context.Request.Headers.Remove("X-XSRF-TOKEN");
+        }
+    }
+    return next();
+});
+
+// Enable middleware to serve generated Swagger as a JSON endpoint
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AquaAi API");
+    c.RoutePrefix = "swagger";
+});
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
@@ -95,4 +137,7 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components
 app.MapAdditionalIdentityEndpoints();
 
+// Map API controllers
+app.MapControllers();
+app.UseAntiforgery();
 app.Run();

@@ -1,16 +1,20 @@
 ﻿@page "/Account/ConfirmEmail"
-
+@using AquaAi.Components.Layout
+@layout LoginLayout
 @using System.Text
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using AquaAi.Data
-
 @inject UserManager<ApplicationUser> UserManager
 @inject IdentityRedirectManager RedirectManager
+<style>
+    h1 {
+        font-size: 3rem;
+    }
+</style>
+<h1>Confirm email </h1>
+<hr />
 
-<PageTitle>Confirm email</PageTitle>
-
-<h1>Confirm email</h1>
 <StatusMessage Message="@statusMessage" />
 
 @code {

@@ -22,7 +22,6 @@ namespace AquaAi.shared.Models
         // Foreign key property
         public int KitId { get; set; }
         // Navigation properties
-        public SensorKit? SensorKit { get; set; }
         public List<Product>? Inventory { get; set; }
         public List<BillDetails>? BillDetails { get; set; }
         public List<InvoiceDetails>? InvoiceDetails { get; set; }

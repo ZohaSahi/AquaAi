@@ -1,0 +1,61 @@
+﻿@page "/editinvoicemodal"
+@inject ISnackbar _snackBar
+@inject HttpClient httpClient
+@using AquaAi.shared.Models
+@using MudBlazor
+@using AquaAi.Components.Layout
+@layout DashboardLayout
+<MudDialog MaxWidth="MaxWidth.Small" FullWidth="true">
+    <DialogContent>
+        <MudTextField @bind-Value="Invoice.InvoiceId" Label="Invoice ID" Disabled="true" />
+        <MudDatePicker Label="Invoice Date" Editable="true" @bind-Value="Invoice.InvoiceDate" Placeholder="Select Date" />
+        <MudTextField @bind-Value="Invoice.TotalAmount" Label="Total Amount" />
+        <MudTextField @bind-Value="Invoice.PaymentStatus" Label="Payment Status" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Invoice Invoice { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+
+    private async Task Save()
+    {
+        if (IsEditMode)
+        {
+            var response = await httpClient.PutAsJsonAsync($"api/invoices/{Invoice.InvoiceId}", Invoice);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Invoice updated successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error updating invoice", Severity.Error);
+            }
+        }
+        else
+        {
+            var response = await httpClient.PostAsJsonAsync("api/invoices", Invoice);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Invoice created successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error creating invoice", Severity.Error);
+            }
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

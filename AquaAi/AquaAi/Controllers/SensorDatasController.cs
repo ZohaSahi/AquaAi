@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AquaAi.Data;
-using AquaAi.shared.Models;
+using AquaAi.Shared.Models;
 
-namespace AquaAi.Controllers
+namespace AquaAi
 {
     [Route("api/[controller]")]
     [ApiController]

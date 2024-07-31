@@ -1,0 +1,60 @@
+﻿@inject ISnackbar _snackBar
+@inject HttpClient httpClient
+@using AquaAi.shared.Models
+@using MudBlazor
+@using AquaAi.Components.Layout
+@layout DashboardLayout
+<MudDialog MaxWidth="MaxWidth.Small" FullWidth="true">
+    <DialogContent>
+        <MudTextField @bind-Value="Bill.BillId" Label="Bill ID" Disabled="true" />
+        <MudDatePicker @bind-Value="Bill.BillDate" Label="Bill Date" />
+        <MudTextField @bind-Value="Bill.TotalAmount" Label="Total Amount" />
+        <MudTextField @bind-Value="Bill.PaymentStatus" Label="Payment Status" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Bill Bill { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+
+    private async Task Save()
+    {
+        if (IsEditMode)
+        {
+            var response = await httpClient.PutAsJsonAsync($"api/bills/{Bill.BillId}", Bill);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Bill updated successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error updating bill", Severity.Error);
+            }
+        }
+        else
+        {
+            var response = await httpClient.PostAsJsonAsync("api/bills", Bill);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Bill created successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error creating bill", Severity.Error);
+            }
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

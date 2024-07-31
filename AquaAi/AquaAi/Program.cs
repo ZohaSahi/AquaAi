@@ -53,8 +53,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Strict; // Adjust this as necessary
+    options.Cookie.SameSite = SameSiteMode.None; // Adjust this as necessary
 });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7254/") });
 
 //builder.Services.AddAntiforgery(options =>
 //{

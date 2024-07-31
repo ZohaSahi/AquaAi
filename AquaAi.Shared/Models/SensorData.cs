@@ -1,15 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace AquaAi.shared.Models
+namespace AquaAi.Shared.Models
 {
     public class SensorData
     {
         [Key]
         [Required]
         public int SensorDataId { get; set; }
-        [Required]
-        [Range(0, 14, ErrorMessage = "PHLevel must be between 0 and 14")]
-        public double PHLevel { get; set; }
+
         [Required]
         public double Conductivity { get; set; }
         [Required]
@@ -18,10 +21,6 @@ namespace AquaAi.shared.Models
         public DateTime Timestamp { get; set; }
         [Required]
         public double LiquidLevel { get; set; }
-        // Foreign key
-        public int KitId { get; set; }
-        // Navigation property
-        public SensorKit? SensorKit { get; set; }
 
     }
 }

@@ -1,0 +1,65 @@
+﻿@inject ISnackbar _snackBar
+@inject HttpClient httpClient
+@using AquaAi.shared.Models
+@using MudBlazor
+@using AquaAi.Components.Layout
+@layout DashboardLayout
+
+<MudDialog MaxWidth="MaxWidth.Small" FullWidth="true">
+    <DialogContent>
+        <MudTextField @bind-Value="Product.ItemId" Label="Item ID" Disabled="true" />
+        <MudTextField @bind-Value="Product.Location" Label="Location" />
+        <MudTextField @bind-Value="Product.Quantity" Label="Quantity" />
+        <MudTextField @bind-Value="Product.LiquidType" Label="Liquid Type" />
+        <MudTextField @bind-Value="Product.ItemName" Label="Item Name" />
+        <MudTextField @bind-Value="Product.UnitPrice" Label="Unit Price" />
+        <MudTextField @bind-Value="Product.SupplierId" Label="Supplier ID" />
+        <MudDatePicker @bind-Value="Product.ExpiryDate" Label="Expiry Date" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Product Product { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+
+    private async Task Save()
+    {
+        if (IsEditMode)
+        {
+            var response = await httpClient.PutAsJsonAsync($"api/Products/{Product.ItemId}", Product);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Product updated successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error updating product", Severity.Error);
+            }
+        }
+        else
+        {
+            var response = await httpClient.PostAsJsonAsync("api/Products", Product);
+            if (response.IsSuccessStatusCode)
+            {
+                _snackBar.Add("Product created successfully", Severity.Success);
+            }
+            else
+            {
+                _snackBar.Add("Error creating product", Severity.Error);
+            }
+        }
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

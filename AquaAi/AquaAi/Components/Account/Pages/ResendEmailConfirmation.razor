@@ -1,36 +1,140 @@
 ﻿@page "/Account/ResendEmailConfirmation"
-
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using AquaAi.Data
-
+@using AquaAi.Components.Layout
+@layout LoginLayout
 @inject UserManager<ApplicationUser> UserManager
 @inject IEmailSender<ApplicationUser> EmailSender
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+<style>
+    :root {
+        --yellow: #f5bf23;
+        --black: #111;
+        --white: #fff;
+        --light-color: #666;
+        --light-bg: #eee;
+        --box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+        --border: .1rem solid rgba(0,0,0,.3);
+    }
 
-<PageTitle>Resend email confirmation</PageTitle>
+    * {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        outline: none;
+        border: none;
+        text-decoration: none;
+    }
+    .pagelogin .logo {
+        font-size: 3rem;
+        color: var(--black);
+        text-transform: capitalize;
+        text-decoration: none;
+    }
 
-<h1>Resend email confirmation</h1>
-<h2>Enter your email.</h2>
-<hr />
+    .pagelogin .logo-image {
+        max-height: 6rem;
+        margin-right: 1.5rem;
+    }
+
+    .pagelogin .logo span {
+        color: var(--yellow);
+    }
+
+    .login-form {
+        position: absolute;
+        top: 5%;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+        width: 50rem;
+        background: var(--white);
+        -webkit-box-shadow: var(--box-shadow);
+        box-shadow: var(--box-shadow);
+        padding: 2rem;
+        text-align: center;
+        -webkit-animation: fadeIn .2s linear;
+        animation: fadeIn .2s linear;
+    }
+
+    .pagelogin .login-form h3 {
+        font-size: 2.5rem;
+        color: var(--black);
+        text-transform: capitalize;
+        padding-bottom: 1rem;
+        text-transform: uppercase;
+    }
+
+    .pagelogin .login-form .box {
+        width: 100%;
+        padding: 1.2rem 1.4rem;
+        background: var(--light-bg);
+        font-size: 1.6rem;
+        color: var(--light-color);
+        margin: .7rem 0;
+    }
+
+
+    .pagelogin .login-form .btn {
+        width: 100%;
+    }
+
+    .pagelogin .login-form p {
+        font-size: 1.5rem;
+        color: var(--light-color);
+        line-height: 2;
+        padding-top: 1.5rem;
+    }
+
+        .pagelogin .login-form p a {
+            color: var(--yellow);
+        }
+
+            .pagelogin .login-form p a:hover {
+                text-decoration: underline;
+            }
+
+    .pagelogin .login-form .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 1rem 3rem;
+        background: var(--black);
+        color: var(--white);
+        cursor: pointer;
+        font-size: 1.7rem;
+        text-transform: capitalize;
+        -webkit-transition: .2s linear;
+        transition: .2s linear;
+    }
+
+        .pagelogin .login-form .btn:hover {
+            background: var(--yellow);
+            color: var(--black);
+        }
+</style>
+
+    <div class="pagelogin">
+
 <StatusMessage Message="@message" />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm Model="Input" FormName="resend-email-confirmation" OnValidSubmit="OnValidSubmitAsync" method="post">
+
+        <EditForm Model="Input" FormName="resend-email-confirmation" OnValidSubmit="OnValidSubmitAsync" method="post" class="login-form">
+        <a href="#" class="logo">
+            <img src="images/AquaAiLogo.jpg" alt="AquaAi Logo" class="logo-image">Email<span>Confirmation</span>
+        </a>
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" aria-required="true" placeholder="name@example.com" />
-                <label for="email" class="form-label">Email</label>
+                <InputText @bind-Value="Input.Email" class="box" aria-required="true" placeholder="Enter your email" />
                 <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Resend</button>
+            <button type="submit" class="btn">Resend</button>
         </EditForm>
-    </div>
+    
 </div>
 
 @code {

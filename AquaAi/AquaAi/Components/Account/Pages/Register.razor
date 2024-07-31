@@ -1,5 +1,6 @@
 ﻿@page "/Account/Register"
-
+@using AquaAi.Components.Layout
+@layout LoginLayout
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
@@ -14,45 +15,213 @@
 @inject ILogger<Register> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+<style>
+    :root {
+        --yellow: #f5bf23;
+        --black: #111;
+        --white: #fff;
+        --light-color: #666;
+        --light-bg: #eee;
+        --box-shadow: 0 .5rem 1rem rgba(0,0,0,.1);
+        --border: .1rem solid rgba(0,0,0,.3);
+    }
 
-<PageTitle>Register</PageTitle>
+    * {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        outline: none;
+        border: none;
+        text-decoration: none;
+    }
 
-<h1>Register</h1>
+    html {
+        font-size: 62.5%;
+        overflow-x: hidden;
+        scroll-behavior: smooth;
+        scroll-padding-top: 7rem;
+    }
 
-<div class="row">
-    <div class="col-md-4">
+        html::-webkit-scrollbar {
+            width: 1rem;
+        }
+
+        html::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        html::-webkit-scrollbar-thumb {
+            background: var(--yellow);
+        }
+
+    section {
+        padding: 5rem 10%;
+    }
+
+    .heading {
+        margin-bottom: 3rem;
+        font-size: 3rem;
+        color: var(--black);
+        text-transform: capitalize;
+        padding-left: 1rem;
+        border-left: 1rem solid var(--yellow);
+    }
+
+    .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 1rem 3rem;
+        background: var(--black);
+        color: var(--white);
+        cursor: pointer;
+        font-size: 1.7rem;
+        text-transform: capitalize;
+        -webkit-transition: .2s linear;
+        transition: .2s linear;
+    }
+
+        .btn:hover {
+            background: var(--yellow);
+            color: var(--black);
+        }
+    .pagelogin .logo {
+        font-size: 3rem;
+        color: var(--black);
+        text-transform: capitalize;
+        text-decoration: none;
+    }
+
+    .pagelogin .logo-image {
+        max-height: 6rem;
+        margin-right: 1.5rem;
+    }
+
+    .pagelogin .logo span {
+        color: var(--yellow);
+    }
+
+    .login-form {
+        position: absolute;
+        top: 15%;
+        left: 50%;
+        -webkit-transform: translateX(-50%);
+        transform: translateX(-50%);
+        width: 40rem;
+        background: var(--white);
+        -webkit-box-shadow: var(--box-shadow);
+        box-shadow: var(--box-shadow);
+        padding: 2rem;
+        text-align: center;
+        -webkit-animation: fadeIn .2s linear;
+        animation: fadeIn .2s linear;
+    }
+
+    .pagelogin .login-form h3 {
+        font-size: 2.5rem;
+        color: var(--black);
+        text-transform: capitalize;
+        padding-bottom: 1rem;
+        text-transform: uppercase;
+    }
+
+    .pagelogin .login-form .box {
+        width: 100%;
+        padding: 1.2rem 1.4rem;
+        background: var(--light-bg);
+        font-size: 1.6rem;
+        color: var(--light-color);
+        margin: .7rem 0;
+    }
+
+    .pagelogin .login-form .flex {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        gap: .5rem;
+        padding-top: 1.5rem;
+        padding-bottom: 1rem;
+    }
+
+        .pagelogin .login-form .flex label {
+            font-size: 1.5rem;
+            color: var(--light-color);
+            cursor: pointer;
+        }
+
+        .pagelogin .login-form .flex a {
+            font-size: 1.5rem;
+            color: var(--light-color);
+            margin-left: auto;
+        }
+
+            .pagelogin .login-form .flex a:hover {
+                color: var(--yellow);
+                text-decoration: underline;
+            }
+
+    .pagelogin .login-form .btn {
+        width: 100%;
+    }
+
+    .pagelogin .login-form p {
+        font-size: 1.5rem;
+        color: var(--light-color);
+        line-height: 2;
+        padding-top: 1.5rem;
+    }
+
+        .pagelogin .login-form p a {
+            color: var(--yellow);
+        }
+
+            .pagelogin .login-form p a:hover {
+                text-decoration: underline;
+            }
+
+    .pagelogin .login-form .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        padding: 1rem 3rem;
+        background: var(--black);
+        color: var(--white);
+        cursor: pointer;
+        font-size: 1.7rem;
+        text-transform: capitalize;
+        -webkit-transition: .2s linear;
+        transition: .2s linear;
+    }
+
+        .pagelogin .login-form .btn:hover {
+            background: var(--yellow);
+            color: var(--black);
+        }
+
+    
+    </style>
+<header class="pagelogin">
+    <StatusMessage Message="@Message" />
+    <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register" class="login-form">
         <StatusMessage Message="@Message" />
-        <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
-            <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
-            <hr />
-            <ValidationSummary class="text-danger" role="alert" />
-            <div class="form-floating mb-3">
-                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label for="email">Email</label>
-                <ValidationMessage For="() => Input.Email" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="password">Password</label>
-                <ValidationMessage For="() => Input.Password" class="text-danger" />
-            </div>
-            <div class="form-floating mb-3">
-                <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="confirm-password">Confirm Password</label>
-                <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
-            </div>
-            <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </EditForm>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
-</div>
+        <DataAnnotationsValidator />
+        <a href="#" class="logo">
+            <img src="images/AquaAiLogo.jpg" alt="AquaAi Logo" class="logo-image">Create<span>Account</span>
+        </a>        
+        <hr />
+        <ValidationSummary class="text-danger" role="alert" />
+        <InputText @bind-Value="Input.Email" class="box" autocomplete="username" aria-required="true" placeholder="enter your email" />
+        <ValidationMessage For="() => Input.Email" class="text-danger" />
+        <InputText type="password" @bind-Value="Input.Password" class="box" autocomplete="new-password" aria-required="true" placeholder="enter your password" />
+        <ValidationMessage For="() => Input.Password" class="text-danger" />
+        <InputText type="password" @bind-Value="Input.ConfirmPassword" class="box" autocomplete="new-password" aria-required="true" placeholder="confirm your password" />
+        <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+        <button type="submit" class="btn">Register</button>
+    </EditForm>
+</header>
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;

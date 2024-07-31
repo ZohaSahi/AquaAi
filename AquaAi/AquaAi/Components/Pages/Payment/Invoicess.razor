@@ -1,0 +1,125 @@
+﻿@page "/Payment/invoicess"
+@using AquaAi.shared.Models
+@using System.Net.Http.Json
+@inject HttpClient httpClient
+@inject ISnackbar _snackBar
+@inject NavigationManager NavigationManager
+@inject IDialogService _dialogService
+@using MudBlazor
+@using AquaAi.Components.Layout
+@layout DashboardLayout
+<style>
+    .mud-table-container {
+        overflow: auto;
+    }
+</style>
+
+<MudTable Elevation="25" Items="@Invoices" Dense="@dense" Striped="@striped" Filter="new Func<Invoice,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+        <MudGrid Class="table-container">
+            <MudItem xs="12" md="12" lg="12" sm="12" xl="12" xxl="12" Class="d-flex flex-row" Style="padding-top: 120px;">
+                <MudItem xs="4" md="4" lg="4" sm="4" xl="12" xxl="4" Class="d-flex flex-row" Style="padding-top: 10px;">
+                    <div class="justify-center mud-text-align-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" IconColor="Color.Surface" OnClick="@(() => ShowModal())">Create</MudButton>
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Refresh" IconColor="Color.Surface" Color="Color.Secondary" Style="margin-left:2px" OnClick="@ReloadInvoices">Reload</MudButton>
+                    </div>
+                </MudItem>
+                <MudItem xs="4" md="4" lg="4" sm="4" xl="12" xxl="4" Class="d-flex flex-row">
+                </MudItem>
+                <MudItem xs="4" md="4" lg="4" sm="4" xl="12" xxl="4" Class="d-flex flex-row">
+                    <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </MudItem>
+            </MudItem>
+            <MudItem xs="12" md="12" lg="12" sm="12" xl="12" xxl="12">
+                <MudDivider DividerType="DividerType.FullWidth" Style="background-color: #1e88e5; height: 2px;"></MudDivider>
+            </MudItem>
+        </MudGrid>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Invoice Id</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:100px;">Invoice Date</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:100px;">Total Amount</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:100px;">Payment Status</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:100px;">Actions</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Invoice Id">@context.InvoiceId</MudTd>
+        <MudTd DataLabel="Invoice Date">@context.InvoiceDate.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd DataLabel="Total Amount">@context.TotalAmount</MudTd>
+        <MudTd DataLabel="Payment Status">@context.PaymentStatus</MudTd>
+        <MudTd DataLabel="Actions">
+            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => ShowModal(@context))" />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteInvoice(@context.InvoiceId))" />
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Value="hover" Color="Color.Primary" Style="margin-left: 5px;">Hover</MudSwitch>
+    <MudSwitch @bind-Value="dense" Color="Color.Secondary" Style="margin-left: 5px;">Dense</MudSwitch>
+    <MudSwitch @bind-Value="striped" Color="Color.Tertiary" Style="margin-left: 5px;">Striped</MudSwitch>
+    <MudSpacer />
+</div>
+
+@code {
+    private bool dense = true;
+    private bool hover = true;
+    private bool striped = true;
+
+    private string searchString1 = "";
+    private Invoice selectedItem1 = null;
+    private HashSet<Invoice> selectedItems = new HashSet<Invoice>();
+
+    private IEnumerable<Invoice> Invoices = new List<Invoice>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadInvoices();
+    }
+
+    private async Task ReloadInvoices()
+    {
+        Invoices = await httpClient.GetFromJsonAsync<List<Invoice>>("api/invoices");
+        StateHasChanged();
+    }
+
+    private bool FilterFunc1(Invoice invoice) => FilterFunc(invoice, searchString1);
+
+    private bool FilterFunc(Invoice invoice, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (invoice.PaymentStatus.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if ($"{invoice.InvoiceId} {invoice.InvoiceDate.ToString("yyyy-MM-dd")} {invoice.TotalAmount}".Contains(searchString))
+            return true;
+        return false;
+    }
+
+    private async Task ShowModal(Invoice invoice = null)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("Invoice", invoice ?? new Invoice());
+        parameters.Add("IsEditMode", invoice != null);
+
+        var options = new DialogOptions() { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+        var dialog = _dialogService.Show<EditInvoiceModal>("Invoice Modal", parameters, options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await ReloadInvoices();
+            _snackBar.Add($"Invoice {(invoice != null ? "updated" : "created")} successfully", Severity.Success);
+        }
+    }
+
+    private async Task DeleteInvoice(int invoiceId)
+    {
+        await httpClient.DeleteAsync($"api/invoices/{invoiceId}");
+        await ReloadInvoices();
+        _snackBar.Add("Invoice deleted successfully", Severity.Error);
+    }
+}

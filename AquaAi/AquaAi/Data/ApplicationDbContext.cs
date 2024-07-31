@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using AquaAi.shared.Models;
 using static MudBlazor.Icons;
+using AquaAi.Shared.Models;
 
 namespace AquaAi.Data
 {
@@ -15,6 +16,7 @@ namespace AquaAi.Data
         public DbSet<Product> Inventory { get; set; }
         public DbSet<Liquid> Liquid { get; set; }
         public DbSet<SensorData> SensorData { get; set; }
-        public DbSet<SensorKit> SensorKit { get; set; }
+        public DbSet<Test> Test { get; set; }
+        public DbSet<Prediction> Prediction { get; set; }
     }
 }

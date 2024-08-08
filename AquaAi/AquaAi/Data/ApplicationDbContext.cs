@@ -10,9 +10,7 @@ namespace AquaAi.Data
     {
         public DbSet<ApplicationUser> User { get; set; }
         public DbSet<Bill> Bills { get; set; }
-        public DbSet<BillDetails> BillDetails { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
-        public DbSet<InvoiceDetails> InvoiceDetails { get; set; }
         public DbSet<Product> Inventory { get; set; }
         public DbSet<Liquid> Liquid { get; set; }
         public DbSet<SensorData> SensorData { get; set; }

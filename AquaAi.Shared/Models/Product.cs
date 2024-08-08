@@ -23,10 +23,7 @@ namespace AquaAi.shared.Models
         public int SupplierId { get; set; }
         [Required]
         public DateTime ExpiryDate { get; set; }
-        // Foreign key property
-        public int LiquidId { get; set; }
-        // Navigation property
-        public Liquid? Liquid { get; set; }
+        
 
     }
 }

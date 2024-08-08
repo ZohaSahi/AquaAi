@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AquaAi.Data;
 using AquaAi.Shared.Models;
-
-namespace AquaAi
+namespace AquaAi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -74,7 +73,6 @@ namespace AquaAi
         }
 
         // POST: api/SensorDatas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<SensorData>> PostSensorData(SensorData sensorData)
         {

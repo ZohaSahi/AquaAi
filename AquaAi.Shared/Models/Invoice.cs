@@ -14,10 +14,6 @@ namespace AquaAi.shared.Models
         public decimal TotalAmount { get; set; }
         [Required]
         public string? PaymentStatus { get; set; }
-        // Foreign key property
-        public int CustomerId { get; set; }
-        // Navigation property
-        public List<InvoiceDetails>? InvoiceDetails { get; set; }
-
+       
     }
 }

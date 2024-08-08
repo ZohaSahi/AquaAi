@@ -1,0 +1,143 @@
+﻿@page "/liquidlevel"
+@using MudBlazor
+@using AquaAi.Components.Layout
+@layout DashboardLayout
+ <style>
+     h5{
+        padding-left:20px;
+    }
+</style>
+<MudText Typo="Typo.h5" Style="font-size:20px;">Sensor Readings</MudText>
+<MudCard>
+    <MudCardContent>
+        <MudGrid>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardContent>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <MudText Typo="Typo.h6" Align="Align.Center">Liquid Level</MudText>
+                            <div style="position: relative; width: 100px; height: 100px;">
+                                <MudProgressCircular Value="@liquidLevel" Max="100" Thickness="4" Color="Color.Primary" Style="width: 100%; height: 100%;" />
+                                <MudIcon Icon="@Icons.Material.Filled.Opacity" Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; color: var(--mud-palette-primary);" />
+                            </div>
+                            <MudText Typo="Typo.body1" Align="Align.Center">Current Level: @liquidLevel%</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardContent>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <MudText Typo="Typo.h6" Align="Align.Center">Conductivity</MudText>
+                            <div style="position: relative; width: 100px; height: 100px;">
+                                <MudProgressCircular Value="@conductivityProgress" Max="100" Thickness="4" Color="Color.Success" Style="width: 100%; height: 100%;" />
+                                <MudIcon Icon="@Icons.Material.Filled.ElectricalServices" Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; color: var(--mud-palette-success);" />
+                            </div>
+                            <MudText Typo="Typo.body1" Align="Align.Center">Current Conductivity: @conductivity µS/cm</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="4">
+                <MudCard>
+                    <MudCardContent>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <MudText Typo="Typo.h6" Align="Align.Center">Viscosity</MudText>
+                            <div style="position: relative; width: 100px; height: 100px;">
+                                <MudProgressCircular Value="@viscosityProgress" Max="100" Thickness="4" Color="Color.Info" Style="width: 100%; height: 100%;" />
+                                <MudIcon Icon="@Icons.Material.Filled.DirectionsBoat" Style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 36px; color: var(--mud-palette-info);" />
+                            </div>
+                            <MudText Typo="Typo.body1" Align="Align.Center">Current Viscosity: @viscosity cP</MudText>
+                        </div>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        </MudGrid>
+
+        <div style="display: flex; justify-content: center; margin-top: 16px;">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="IncreaseLevel" Style="opacity: 0; cursor: none;">
+                Increase Level
+            </MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" OnClick="DecreaseLevel" Style="cursor: none;opacity: 0; margin-left: 8px;">
+                Decrease Level
+            </MudButton>
+        </div>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private int liquidLevel = 50; // Initial liquid level
+    private int conductivity = 25; // Initial conductivity
+    private int viscosity =40; // Initial viscosity
+
+    private int conductivityProgress => GetConductivityProgress();
+    private int viscosityProgress => GetViscosityProgress();
+
+    [Inject] private IDialogService? DialogService { get; set; }
+
+    private async Task IncreaseLevel()
+    {
+        if (liquidLevel < 100)
+        {
+            liquidLevel += 10;
+        }
+    }
+
+    private async Task DecreaseLevel()
+    {
+        if (liquidLevel > 0)
+        {
+            liquidLevel -= 10;
+        }
+        if (liquidLevel < 20)
+        {
+            await ShowLowLevelDialog();
+        }
+    }
+
+    private int GetConductivityProgress()
+    {
+        if (conductivity >= 200 && conductivity <= 800)
+        {
+            return 100; // Full progress
+        }
+        return 20; // Partial progress for out-of-range values
+    }
+
+    private int GetViscosityProgress()
+    {
+        if (viscosity == 0.89)
+        {
+            return 100; // Full progress
+        }
+        return 20; // Partial progress for out-of-range values
+    }
+
+    private async Task ShowLowLevelDialog()
+    {
+        var parameters = new DialogParameters
+            {
+                ["DialogTitle"] = "Low Level Warning",
+                ["ContentText"] = "Quantity low. Please refill.",
+                ["Icon"] = Icons.Material.Filled.Warning
+            };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<LowLevelDialog>("Low Level Warning", parameters, options);
+        await dialog.Result; // Await the dialog's result if needed
+    }
+
+    private async Task ShowQualityDeviateDialog()
+    {
+        var parameters = new DialogParameters
+            {
+                ["DialogTitle"] = "Quality Deviate Warning",
+                ["ContentText"] = "Quality of the water is deviating from the normal range.",
+                ["Icon"] = Icons.Material.Filled.Error.ToString() // Convert icon to string
+            };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var dialog = DialogService.Show<QualityDeviateDialog>("Quality Deviate Warning", parameters, options);
+        await dialog.Result; // Await the dialog's result if needed
+    }
+
+}

@@ -4,16 +4,13 @@
 @using MudBlazor
 @using AquaAi.Components.Layout
 @layout DashboardLayout
-
 <MudDialog MaxWidth="MaxWidth.Small" FullWidth="true">
     <DialogContent>
         <MudTextField @bind-Value="Liquid.LiquidId" Label="Liquid ID" Disabled="true" />
         <MudTextField @bind-Value="Liquid.LiquidName" Label="Liquid Name" />
-        <MudTextField @bind-Value="Liquid.Length" Label="Length" />
-        <MudTextField @bind-Value="Liquid.Width" Label="Width" />
-        <MudTextField @bind-Value="Liquid.Height" Label="Height" />
+        <MudTextField @bind-Value="Liquid.Height" Label="Tank Height" />
+        <MudTextField @bind-Value="Liquid.Width" Label="Tank Width" />
         <MudTextField @bind-Value="Liquid.Liquid_price" Label="Liquid Price" />
-        <MudTextField @bind-Value="Liquid.KitId" Label="Kit ID" />
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>

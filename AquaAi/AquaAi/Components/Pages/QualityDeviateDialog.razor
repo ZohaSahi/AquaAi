@@ -1,0 +1,20 @@
+﻿@using MudBlazor
+<MudDialog>
+    <MudDialogTitle>@DialogTitle</MudDialogTitle>
+    <MudDialogContent>
+        <MudIcon Icon="@Icon" Color="Color.Error" />
+        <MudText Typo="Typo.body1">@ContentText</MudText>
+    </MudDialogContent>
+    <MudDialogActions>
+        <MudButton OnClick="Close">OK</MudButton>
+    </MudDialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance? Dialog { get; set; }
+    [Parameter] public string DialogTitle { get; set; } = string.Empty;
+    [Parameter] public string ContentText { get; set; } = string.Empty;
+    [Parameter] public string Icon { get; set; } = Icons.Material.Filled.Warning; // Default icon
+
+    private void Close() => Dialog?.Close();
+}

@@ -20,7 +20,7 @@ namespace AquaAi.Shared.Models
         [Required]
         public DateTime Timestamp { get; set; }
         [Required]
-        public double LiquidLevel { get; set; }
+        public string LiquidLevel { get; set; }
 
     }
 }

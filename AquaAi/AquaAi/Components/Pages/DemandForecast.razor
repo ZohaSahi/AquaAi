@@ -1,26 +1,82 @@
 ﻿@page "/demandforecast"
 @using AquaAi.Components.Layout
+@using System.Collections.Generic
+
 @layout DashboardLayout
+<style>
+    .uniform-button-width {
+        min-width: 80px;
+        padding-left:12.5px;
+    }
+    p{
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        font-size:15px;
+        padding-top:10px;
+    }
+    h5{
+        padding-left:20px;
+    }
+</style>
+<h5>Liquid Demand Forecast</h5>
+<MudCard>
+    <MudCardContent>
 <div>
-    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="@Options"/>
-    <MudGrid>
-        <MudItem xs="6">
-            <MudText Typo="Typo.body1" Class="py-3">Selected: @(Index < 0 ? "None" : Series[Index].Name)</MudText>
-        </MudItem>
-        <MudItem xs="6">
-            <MudSlider @bind-Value="Options.LineStrokeWidth" Min="1" Max="10" Color="Color.Info">Line Width: @Options.LineStrokeWidth.ToString()</MudSlider>
-        </MudItem>
-    </MudGrid>
+    <MudChart ChartType="ChartType.Line" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" ChartOptions="@Options" />
 </div>
+    </MudCardContent>
+</MudCard>
+<MudButtonGroup Color="Color.Primary" Variant="Variant.Outlined" OverrideStyles="_overrideStyles">
+    <MudButton Color="Color.Primary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("January")'>January</MudButton>
+    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("February")'>February</MudButton>
+    <MudButton Color="Color.Tertiary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("March")'>March</MudButton>
+    <MudButton Color="Color.Info" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("April")'>April</MudButton>
+    <MudButton Color="Color.Success" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("May")'>May</MudButton>
+    <MudButton Color="Color.Warning" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("June")'>June</MudButton>
+    <MudButton Color="Color.Error" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("July")'>July</MudButton>
+    <MudButton Color="Color.Primary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("August")'>August</MudButton>
+    <MudButton Color="Color.Secondary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("September")'>September</MudButton>
+    <MudButton Color="Color.Tertiary" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("October")'>October</MudButton>
+    <MudButton Color="Color.Info" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("November")'>November</MudButton>
+    <MudButton Color="Color.Success" Variant="Variant.Outlined" Class="uniform-button-width" @onclick='() => ShowQuantity("December")'>December</MudButton>
+</MudButtonGroup>
+
+@if (!string.IsNullOrEmpty(selectedMonth))
+{
+    <p>Liquid Quantity Required for @selectedMonth: @monthQuantities[selectedMonth] Tank</p>
+}
+
 @code {
-    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private string? selectedMonth;
+    private Dictionary<string, int> monthQuantities = new Dictionary<string, int>
+    {
+        { "January", 12 },
+        { "February", 15 },
+        { "March", 18 },
+        { "April", 10 },
+        { "May", 22 },
+        { "June", 16 },
+        { "July", 14 },
+        { "August", 20 },
+        { "September", 11 },
+        { "October", 19 },
+        { "November", 13 },
+        { "December", 17 }
+    };
+
+    private void ShowQuantity(string month)
+    {
+        selectedMonth = month;
+    }
+
+    private bool _overrideStyles;
+
+    private int Index = -1; 
     public ChartOptions Options = new ChartOptions();
     
     public List<ChartSeries> Series = new List<ChartSeries>()
     {
-        new ChartSeries() { Name = "Fossil", Data = new double[] { 90, 79, 72, 69, 62, 62, 55, 65, 70 } },
-        new ChartSeries() { Name = "Renewable", Data = new double[] { 10, 41, 35, 51, 49, 62, 69, 91, 148 } },
+        new ChartSeries() { Name = "Liquid Quantity Prediction", Data = new double[] { 5, 6, 5, 6, 7, 9, 12, 9, 7 } },
     };
     public string[] XAxisLabels = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-    
+
 }

@@ -17,7 +17,7 @@ namespace AquaAi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -87,6 +87,60 @@ namespace AquaAi.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("AquaAi.Shared.Models.Prediction", b =>
+                {
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.ToTable("Prediction");
+                });
+
+            modelBuilder.Entity("AquaAi.Shared.Models.SensorData", b =>
+                {
+                    b.Property<int>("SensorDataId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SensorDataId"));
+
+                    b.Property<double>("Conductivity")
+                        .HasColumnType("float");
+
+                    b.Property<string>("LiquidLevel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Viscosity")
+                        .HasColumnType("float");
+
+                    b.HasKey("SensorDataId");
+
+                    b.ToTable("SensorData");
+                });
+
+            modelBuilder.Entity("AquaAi.Shared.Models.Test", b =>
+                {
+                    b.Property<float>("Code")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Quantity")
+                        .HasColumnType("real");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.Property<float>("TotalAmount")
+                        .HasColumnType("real");
+
+                    b.ToTable("Test");
+                });
+
             modelBuilder.Entity("AquaAi.shared.Models.Bill", b =>
                 {
                     b.Property<int>("BillId")
@@ -104,52 +158,11 @@ namespace AquaAi.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18, 4)");
-
-                    b.Property<int>("VendorId")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("BillId");
 
                     b.ToTable("Bills");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.BillDetails", b =>
-                {
-                    b.Property<int>("BillDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BillDetailId"));
-
-                    b.Property<int>("BillId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LiquidId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18, 4)");
-
-                    b.Property<int>("Tax")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18, 4)");
-
-                    b.HasKey("BillDetailId");
-
-                    b.HasIndex("BillId");
-
-                    b.HasIndex("LiquidId");
-
-                    b.ToTable("BillDetails");
                 });
 
             modelBuilder.Entity("AquaAi.shared.Models.Invoice", b =>
@@ -159,9 +172,6 @@ namespace AquaAi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceId"));
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("InvoiceDate")
                         .HasColumnType("datetime2");
@@ -178,56 +188,6 @@ namespace AquaAi.Migrations
                     b.ToTable("Invoice");
                 });
 
-            modelBuilder.Entity("AquaAi.shared.Models.InvoiceDetails", b =>
-                {
-                    b.Property<int>("InvoiceDetailId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InvoiceDetailId"));
-
-                    b.Property<string>("Attachments")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ItemId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LiquidId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Subtotal")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Tax")
-                        .HasColumnType("decimal(18, 4)");
-
-                    b.Property<int>("TotalAmount")
-                        .HasColumnType("int");
-
-                    b.HasKey("InvoiceDetailId");
-
-                    b.HasIndex("InvoiceId");
-
-                    b.HasIndex("LiquidId");
-
-                    b.ToTable("InvoiceDetails");
-                });
-
             modelBuilder.Entity("AquaAi.shared.Models.Liquid", b =>
                 {
                     b.Property<int>("LiquidId")
@@ -239,22 +199,17 @@ namespace AquaAi.Migrations
                     b.Property<double>("Height")
                         .HasColumnType("float");
 
-                    b.Property<int>("KitId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Length")
-                        .HasColumnType("float");
-
                     b.Property<string>("LiquidName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<decimal>("Liquid_price")
-                        .HasColumnType("decimal(18, 4)");
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<double>("Width")
-                        .HasColumnType("float");
+                    b.Property<string>("Width")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LiquidId");
 
@@ -277,9 +232,6 @@ namespace AquaAi.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("LiquidId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LiquidType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -301,82 +253,7 @@ namespace AquaAi.Migrations
 
                     b.HasKey("ItemId");
 
-                    b.HasIndex("LiquidId");
-
                     b.ToTable("Inventory");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.SensorData", b =>
-                {
-                    b.Property<int>("SensorDataId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SensorDataId"));
-
-                    b.Property<double>("Conductivity")
-                        .HasColumnType("float");
-
-                    b.Property<int>("KitId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("LiquidLevel")
-                        .HasColumnType("float");
-
-                    b.Property<double>("PHLevel")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("SensorKitKitId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<double>("Viscosity")
-                        .HasColumnType("float");
-
-                    b.HasKey("SensorDataId");
-
-                    b.HasIndex("SensorKitKitId");
-
-                    b.ToTable("SensorData");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.SensorKit", b =>
-                {
-                    b.Property<int>("KitId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("KitId"));
-
-                    b.Property<DateTime>("InstallationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LiquidId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SensorType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("KitId");
-
-                    b.HasIndex("LiquidId")
-                        .IsUnique();
-
-                    b.ToTable("SensorKit");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -516,75 +393,6 @@ namespace AquaAi.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AquaAi.shared.Models.BillDetails", b =>
-                {
-                    b.HasOne("AquaAi.shared.Models.Bill", "Bill")
-                        .WithMany("BillDetails")
-                        .HasForeignKey("BillId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AquaAi.shared.Models.Liquid", "Liquid")
-                        .WithMany("BillDetails")
-                        .HasForeignKey("LiquidId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Bill");
-
-                    b.Navigation("Liquid");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.InvoiceDetails", b =>
-                {
-                    b.HasOne("AquaAi.shared.Models.Invoice", "Invoice")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AquaAi.shared.Models.Liquid", "Liquid")
-                        .WithMany("InvoiceDetails")
-                        .HasForeignKey("LiquidId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Invoice");
-
-                    b.Navigation("Liquid");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.Product", b =>
-                {
-                    b.HasOne("AquaAi.shared.Models.Liquid", "Liquid")
-                        .WithMany("Inventory")
-                        .HasForeignKey("LiquidId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Liquid");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.SensorData", b =>
-                {
-                    b.HasOne("AquaAi.shared.Models.SensorKit", "SensorKit")
-                        .WithMany("SensorDataList")
-                        .HasForeignKey("SensorKitKitId");
-
-                    b.Navigation("SensorKit");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.SensorKit", b =>
-                {
-                    b.HasOne("AquaAi.shared.Models.Liquid", "Liquid")
-                        .WithOne("SensorKit")
-                        .HasForeignKey("AquaAi.shared.Models.SensorKit", "LiquidId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Liquid");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -634,32 +442,6 @@ namespace AquaAi.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.Bill", b =>
-                {
-                    b.Navigation("BillDetails");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.Invoice", b =>
-                {
-                    b.Navigation("InvoiceDetails");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.Liquid", b =>
-                {
-                    b.Navigation("BillDetails");
-
-                    b.Navigation("Inventory");
-
-                    b.Navigation("InvoiceDetails");
-
-                    b.Navigation("SensorKit");
-                });
-
-            modelBuilder.Entity("AquaAi.shared.Models.SensorKit", b =>
-                {
-                    b.Navigation("SensorDataList");
                 });
 #pragma warning restore 612, 618
         }

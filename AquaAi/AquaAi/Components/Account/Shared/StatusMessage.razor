@@ -12,18 +12,28 @@
     [Parameter]
     public string? Message { get; set; }
 
-    [CascadingParameter]
-    private HttpContext HttpContext { get; set; } = default!;
+    [Inject]
+    private IHttpContextAccessor HttpContextAccessor { get; set; } = default!;
 
     private string? DisplayMessage => Message ?? messageFromCookie;
 
     protected override void OnInitialized()
     {
-        messageFromCookie = HttpContext.Request.Cookies[IdentityRedirectManager.StatusCookieName];
+        var httpContext = HttpContextAccessor.HttpContext;
 
-        if (messageFromCookie is not null)
+        if (httpContext != null)
         {
-            HttpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+            messageFromCookie = httpContext.Request.Cookies[IdentityRedirectManager.StatusCookieName];
+
+            if (messageFromCookie is not null)
+            {
+                httpContext.Response.Cookies.Delete(IdentityRedirectManager.StatusCookieName);
+            }
+        }
+        else
+        {
+            // Handle the case where HttpContext is null, if necessary
+            messageFromCookie = "Error: Unable to access HttpContext.";
         }
     }
 }

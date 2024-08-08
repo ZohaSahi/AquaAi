@@ -13,8 +13,11 @@
     .mud-table-container {
         overflow: auto;
     }
+ h5{
+        padding-left:20px;
+    }
 </style>
-
+<MudText Typo="Typo.h5" Style="font-size:20px;">Manage Liquids</MudText>
 <MudTable Elevation="25" Items="@Liquids" Dense="@dense" Striped="@striped" Filter="new Func<Liquid,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem">
     <ToolBarContent>
         <MudGrid Class="table-container">
@@ -37,22 +40,20 @@
         </MudGrid>
     </ToolBarContent>
     <HeaderContent>
-        <MudTh Style="padding-top:125px;padding-left:70px;">Liquid ID</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Liquid Name</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Length</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Width</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Height</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Liquid Price</MudTh>
-        <MudTh Style="padding-top:125px;padding-left:100px;">Actions</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:40px;">Liquid ID</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Liquid Name</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Tank Height</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Tank Width</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Liquid Price</MudTh>
+        <MudTh Style="padding-top:125px;padding-left:70px;">Actions</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Liquid ID">@context.LiquidId</MudTd>
-        <MudTd DataLabel="Liquid Name">@context.LiquidName</MudTd>
-        <MudTd DataLabel="Length">@context.Length</MudTd>
-        <MudTd DataLabel="Width">@context.Width</MudTd>
-        <MudTd DataLabel="Height">@context.Height</MudTd>
-        <MudTd DataLabel="Liquid Price">@context.Liquid_price</MudTd>
-        <MudTd DataLabel="Actions">
+        <MudTd Style="padding-left:50px;" DataLabel="Liquid ID">@context.LiquidId</MudTd>
+        <MudTd Style="padding-left:80px;"  DataLabel="Liquid Name">@context.LiquidName</MudTd>
+        <MudTd Style="padding-left:80px;" DataLabel="Height">@context.Height</MudTd>
+        <MudTd Style="padding-left:80px;" DataLabel="Width">@context.Width</MudTd>
+        <MudTd Style="padding-left:80px;" DataLabel="Liquid Price">@context.Liquid_price</MudTd>
+        <MudTd Style="padding-left:50px;" DataLabel="Actions">
             <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="@(() => ShowModal(@context))" />
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => DeleteLiquid(@context.LiquidId))" />
         </MudTd>
@@ -99,7 +100,7 @@
             return true;
         if (liquid.LiquidName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if ($"{liquid.LiquidId} {liquid.Length} {liquid.Width} {liquid.Height} {liquid.Liquid_price}".Contains(searchString))
+        if ($"{liquid.LiquidId} {liquid.Width} {liquid.Height} {liquid.Liquid_price}".Contains(searchString))
             return true;
         return false;
     }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AquaAi.Data;
 using AquaAi.shared.Models;
 
-namespace AquaAi
+namespace AquaAi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

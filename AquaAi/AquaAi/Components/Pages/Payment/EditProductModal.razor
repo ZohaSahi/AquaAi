@@ -10,11 +10,11 @@
         <MudTextField @bind-Value="Product.ItemId" Label="Item ID" Disabled="true" />
         <MudTextField @bind-Value="Product.Location" Label="Location" />
         <MudTextField @bind-Value="Product.Quantity" Label="Quantity" />
+        <MudDatePicker @bind-Value="Product.ExpiryDate" Label="Expiry Date" />
         <MudTextField @bind-Value="Product.LiquidType" Label="Liquid Type" />
         <MudTextField @bind-Value="Product.ItemName" Label="Item Name" />
         <MudTextField @bind-Value="Product.UnitPrice" Label="Unit Price" />
         <MudTextField @bind-Value="Product.SupplierId" Label="Supplier ID" />
-        <MudDatePicker @bind-Value="Product.ExpiryDate" Label="Expiry Date" />
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Secondary" OnClick="Cancel">Cancel</MudButton>

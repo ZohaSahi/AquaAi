@@ -20,8 +20,4 @@
     <ProjectReference Include="..\..\AquaAi.Shared\AquaAi.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Catalog\" />
-  </ItemGroup>
-
 </Project>
